@@ -19,7 +19,7 @@ az webapp create \
   --resource-group $RESOURCE_GROUP \
   --plan $PLAN_NAME \
   --name $APP_NAME \
-  --runtime "NODE|18-lts" \
+  --runtime "NODE|20-lts" \
   --deployment-local-git
 
 DEPLOY_URL=$(az webapp deployment source config-local-git \
