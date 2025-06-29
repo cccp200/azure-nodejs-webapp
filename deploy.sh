@@ -5,8 +5,9 @@ APP_NAME="azure-nodejs-demo-$RANDOM"
 RESOURCE_GROUP="rg-$APP_NAME"
 LOCATION="westeurope"
 PLAN_NAME="plan-$APP_NAME"
+GITHUB_REPO_URL="https://github.com/cccp200/azure-nodejs-webapp.git"  # ← opdatér denne!
 
-echo "Opretter ressourcer..."
+echo "▶️ Opretter ressourcer..."
 az group create --name $RESOURCE_GROUP --location $LOCATION
 
 az appservice plan create \
@@ -19,20 +20,15 @@ az webapp create \
   --resource-group $RESOURCE_GROUP \
   --plan $PLAN_NAME \
   --name $APP_NAME \
-  --runtime "NODE|20-lts" \
-  --deployment-local-git
+  --runtime "NODE|20-lts"
 
-DEPLOY_URL=$(az webapp deployment source config-local-git \
+# Tilføj GitHub som deployment source (uden CI/CD, bare pull)
+az webapp deployment source config \
   --name $APP_NAME \
   --resource-group $RESOURCE_GROUP \
-  --query url --output tsv)
+  --repo-url $GITHUB_REPO_URL \
+  --branch main \
+  --manual-integration
 
-echo "✅ Web App klar: https://$APP_NAME.azurewebsites.net"
-echo "📘 Git remote-url: $DEPLOY_URL"
-
-echo "Initialiserer Git og deployer..."
-git init
-git remote add azure $DEPLOY_URL
-git add .
-git commit -m "Initial commit"
-git push azure master
+echo "🌍 Appen vil nu blive hentet fra GitHub og deployet til:"
+echo "    https://$APP_NAME.azurewebsites.net"
